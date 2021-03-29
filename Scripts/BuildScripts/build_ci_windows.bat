@@ -28,7 +28,7 @@ echo Using CMake at %CMAKE_BIN%
 IF NOT EXIST %BUILD_FOLDER%\..\ogredeps (
 	mkdir %BUILD_FOLDER%\..\ogredeps
 	echo --- Cloning Ogredeps ---
-	hg clone https://bitbucket.org/cabalistic/ogredeps %BUILD_FOLDER%\..\ogredeps
+	git clone --recurse-submodules --shallow-submodules https://github.com/OGRECave/ogre-next-deps %BUILD_FOLDER%\..\ogredeps
 ) ELSE (
 	echo --- Ogredeps repo detected. Cloning skipped ---
 )
