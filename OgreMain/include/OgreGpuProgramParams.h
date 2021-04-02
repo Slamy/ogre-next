@@ -981,7 +981,7 @@ namespace Ogre {
             ACT_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX,
             /// view matrices.
 
-
+			ACT_VR_WORLDVIEWPROJ_MATRIX,
             /// The current world, view & projection matrices concatenated
             ACT_WORLDVIEWPROJ_MATRIX,
             /** Provides inverse of concatenated world, view and projection matrices.

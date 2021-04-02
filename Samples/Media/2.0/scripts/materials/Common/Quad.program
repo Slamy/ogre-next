@@ -116,5 +116,6 @@ vertex_program Ogre/Compositor/QuadCameraDirNoUV_vs unified
 	{
 		param_named_auto	worldViewProj	worldviewproj_matrix
 		param_named_auto	rsDepthRange	rs_depth_range
+		param_named_auto	vrWorldViewProj	vr_worldviewproj_matrix
 	}
 }

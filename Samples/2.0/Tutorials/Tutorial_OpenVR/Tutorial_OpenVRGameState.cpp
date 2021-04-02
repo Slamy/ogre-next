@@ -28,6 +28,9 @@
 using namespace Demo;
 
 extern const bool c_useRDM;
+float scaler=0.43;
+
+__declspec(dllexport) void __cdecl setScaler(float s);
 
 namespace Demo
 {
@@ -253,6 +256,9 @@ namespace Demo
         mCameraController = new CameraController( mGraphicsSystem, false );
 
         TutorialGameState::createScene01();
+
+        sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "SaintPetersBasilica.dds",
+						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
     }
     //-----------------------------------------------------------------------------------
     void Tutorial_OpenVRGameState::update( float timeSinceLast )
@@ -389,26 +395,23 @@ namespace Demo
         }
         else if( arg.keysym.scancode == SDL_SCANCODE_KP_PLUS )
         {
-            if( mTransparencyValue < 1.0f )
-            {
-                mTransparencyValue += 0.1f;
-                mTransparencyValue = std::min( mTransparencyValue, 1.0f );
-                setTransparencyToMaterials();
-            }
+scaler+=0.01;
+
+printf("scaler %f\n",scaler);
         }
         else if( arg.keysym.scancode == SDL_SCANCODE_MINUS ||
                  arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
         {
-            if( mTransparencyValue > 0.0f )
-            {
-                mTransparencyValue -= 0.1f;
-                mTransparencyValue = std::max( mTransparencyValue, 0.0f );
-                setTransparencyToMaterials();
-            }
+            scaler -= 0.01;
+            printf("scaler %f\n",scaler);
         }
         else
         {
             TutorialGameState::keyReleased( arg );
         }
+        setScaler(scaler);
     }
+
+
+
 }

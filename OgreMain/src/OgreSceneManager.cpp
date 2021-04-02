@@ -1011,6 +1011,7 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
             mSky->setRenderQueueGroup( 212u ); // Render after most stuff
             mSceneRoot[SCENE_STATIC]->attachObject( mSky );
         }
+        printf("%s %d\n",__func__,__LINE__);
 
         const IdType sceneManagerId = getId();
 

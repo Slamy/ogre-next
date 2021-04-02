@@ -71,6 +71,8 @@ namespace Ogre
         AutoConstantDefinition(ACT_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX, "inverse_transpose_worldview_matrix", 16, ET_REAL, ACDT_NONE),
 
         AutoConstantDefinition(ACT_WORLDVIEWPROJ_MATRIX,          "worldviewproj_matrix",        16, ET_REAL, ACDT_NONE),
+		AutoConstantDefinition(ACT_VR_WORLDVIEWPROJ_MATRIX,            "vr_worldviewproj_matrix",          16, ET_REAL, ACDT_NONE),
+
         AutoConstantDefinition(ACT_INVERSE_WORLDVIEWPROJ_MATRIX,       "inverse_worldviewproj_matrix",      16, ET_REAL, ACDT_NONE),
         AutoConstantDefinition(ACT_TRANSPOSE_WORLDVIEWPROJ_MATRIX,     "transpose_worldviewproj_matrix",    16, ET_REAL, ACDT_NONE),
         AutoConstantDefinition(ACT_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX, "inverse_transpose_worldviewproj_matrix", 16, ET_REAL, ACDT_NONE),
@@ -1444,6 +1446,7 @@ namespace Ogre
         case ACT_TRANSPOSE_WORLDVIEW_MATRIX:
         case ACT_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX:
         case ACT_WORLDVIEWPROJ_MATRIX:
+        case ACT_VR_WORLDVIEWPROJ_MATRIX:
         case ACT_INVERSE_WORLDVIEWPROJ_MATRIX:
         case ACT_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
         case ACT_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
@@ -2854,6 +2857,13 @@ namespace Ogre
                 case ACT_WORLDVIEWPROJ_MATRIX:
                     _writeRawConstant(i->physicalIndex, source->getWorldViewProjMatrix(),i->elementCount);
                     break;
+                case ACT_VR_WORLDVIEWPROJ_MATRIX:
+                    index = i->physicalIndex;
+					_writeRawConstant(index, source->getVrWorldViewProjMatrix(0),16);
+                    index += 16;
+					_writeRawConstant(index, source->getVrWorldViewProjMatrix(1),16);
+					break;
+
                 case ACT_INVERSE_WORLDVIEWPROJ_MATRIX:
                     _writeRawConstant(i->physicalIndex, source->getInverseWorldViewProjMatrix(),i->elementCount);
                     break;

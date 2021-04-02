@@ -45,6 +45,14 @@ THE SOFTWARE.
 
 #include "Compositor/OgreCompositorShadowNode.h"
 
+float scaler=0.43;
+
+
+__declspec(dllexport) void __cdecl setScaler(float s)
+{
+	scaler = s;
+}
+
 namespace Ogre {
     const Matrix4 PROJECTIONCLIPSPACE2DTOIMAGESPACE_PERSPECTIVE(
         0.5,    0,    0,  0.5, 
@@ -62,6 +70,7 @@ namespace Ogre {
          mWorldViewMatrixDirty(true),
          mViewProjMatrixDirty(true),
          mWorldViewProjMatrixDirty(true),
+		 mVrWorldViewProjMatrixDirty(true),
          mInverseWorldMatrixDirty(true),
          mInverseWorldViewMatrixDirty(true),
          mInverseViewMatrixDirty(true),
@@ -319,7 +328,7 @@ namespace Ogre {
                 mViewMatrix = Matrix4::IDENTITY;
             else
             {
-                mViewMatrix = mCurrentCamera->getViewMatrix(true);
+                mViewMatrix = mCurrentCamera->getVrViewMatrix(0);
             }
             mViewMatrixDirty = false;
         }
@@ -366,7 +375,7 @@ namespace Ogre {
                 mProjectionMatrix[1][2] = -mProjectionMatrix[1][2];
                 mProjectionMatrix[1][3] = -mProjectionMatrix[1][3];
             }
-            mProjMatrixDirty = false;
+            //mProjMatrixDirty = false;
         }
         return mProjectionMatrix;
     }
@@ -376,7 +385,7 @@ namespace Ogre {
         if (mWorldViewMatrixDirty)
         {
             mWorldViewMatrix = getViewMatrix().concatenateAffine(getWorldMatrix());
-            mWorldViewMatrixDirty = false;
+            //mWorldViewMatrixDirty = false;
         }
         return mWorldViewMatrix;
     }
@@ -386,9 +395,54 @@ namespace Ogre {
         if (mWorldViewProjMatrixDirty)
         {
             mWorldViewProjMatrix = getProjectionMatrix() * getWorldViewMatrix();
-            mWorldViewProjMatrixDirty = false;
+            //mWorldViewProjMatrixDirty = false;
         }
         return mWorldViewProjMatrix;
+    }
+
+
+    //-----------------------------------------------------------------------------
+    const Matrix4& AutoParamDataSource::getVrWorldViewProjMatrix(size_t eye) const
+    {
+        if (mVrWorldViewProjMatrixDirty)
+        {
+        	for( size_t eyeIdx=0u; eyeIdx<2u; ++eyeIdx )
+        	{
+        		Matrix4 mViewMatrix;
+        		Matrix4 mscale=Matrix4::getScale(2*scaler,1*scaler, 1*scaler);
+
+        		if (mCurrentRenderable && mCurrentRenderable->getUseIdentityView())
+        		{
+					//mViewMatrix = mCurrentCamera->getVrData()->mHeadToEye[eyeIdx];
+					mViewMatrix = Matrix4::IDENTITY;
+        		}
+				else
+				{
+					mViewMatrix = mCurrentCamera->getVrViewMatrix(true);
+				}
+
+
+
+        		Matrix4 vrWorldViewMat  = mViewMatrix.concatenateAffine(getWorldMatrix());
+        		//Matrix4 vrViewMat = mCurrentCamera->getVrViewMatrix( eyeIdx ).concatenateAffine(getWorldMatrix());
+        		//Matrix4 vrViewMat = getWorldViewMatrix();
+        		Matrix4 vrProjMat = mCurrentCamera->getVrProjectionMatrix( eyeIdx );
+        		//Matrix4 vrProjMat = mCurrentCamera->getProjectionMatrixWithRSDepth();
+
+        		//if( renderPassDesc->requiresTextureFlipping() )
+        		if (1)
+        		{
+					vrProjMat[1][0] = -vrProjMat[1][0];
+					vrProjMat[1][1] = -vrProjMat[1][1];
+					vrProjMat[1][2] = -vrProjMat[1][2];
+					vrProjMat[1][3] = -vrProjMat[1][3];
+        		}
+
+        		mVrWorldViewProjMatrix[eyeIdx] = vrProjMat * vrWorldViewMat * mscale;
+			}
+        	//mVrWorldViewProjMatrixDirty = false;
+        }
+        return mVrWorldViewProjMatrix[eye];
     }
     //-----------------------------------------------------------------------------
     const Matrix4& AutoParamDataSource::getInverseWorldMatrix(void) const

@@ -66,6 +66,7 @@ namespace Ogre {
         mutable Matrix4 mWorldViewMatrix;
         mutable Matrix4 mViewProjMatrix;
         mutable Matrix4 mWorldViewProjMatrix;
+        mutable Matrix4 mVrWorldViewProjMatrix[2];
         mutable Matrix4 mInverseWorldMatrix;
         mutable Matrix4 mInverseWorldViewMatrix;
         mutable Matrix4 mInverseViewMatrix;
@@ -90,6 +91,7 @@ namespace Ogre {
         mutable bool mWorldViewMatrixDirty;
         mutable bool mViewProjMatrixDirty;
         mutable bool mWorldViewProjMatrixDirty;
+        mutable bool mVrWorldViewProjMatrixDirty;
         mutable bool mInverseWorldMatrixDirty;
         mutable bool mInverseWorldViewMatrixDirty;
         mutable bool mInverseViewMatrixDirty;
@@ -163,6 +165,7 @@ namespace Ogre {
          const Matrix4& getViewProjectionMatrix(void) const;
          const Matrix4& getProjectionMatrix(void) const;
          const Matrix4& getWorldViewProjMatrix(void) const;
+         const Matrix4& getVrWorldViewProjMatrix(size_t eye) const;
          const Matrix4& getWorldViewMatrix(void) const;
          const Matrix4& getInverseWorldMatrix(void) const;
          const Matrix4& getInverseWorldViewMatrix(void) const;
