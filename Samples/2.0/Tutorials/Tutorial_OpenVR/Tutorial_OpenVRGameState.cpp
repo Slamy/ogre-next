@@ -3,12 +3,17 @@
 #include "CameraController.h"
 #include "GraphicsSystem.h"
 
+#include "OgrePrerequisites.h"
+
+
 #include "OgreSceneManager.h"
 #include "OgreItem.h"
 
 #include "OgreMeshManager.h"
 #include "OgreMeshManager2.h"
 #include "OgreMesh2.h"
+#include "OgreRectangle2D2.h"
+#include <iostream>
 
 #include "OgreCamera.h"
 #include "OgreWindow.h"
@@ -253,6 +258,15 @@ namespace Demo
         mCameraController = new CameraController( mGraphicsSystem, false );
 
         TutorialGameState::createScene01();
+
+        sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "SaintPetersBasilica.dds",
+						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
+
+        Ogre::Rectangle2D * a = sceneManager->getSky();
+
+        std::cout <<"bb "<< a->getUseIdentityView()<<std::endl;
+        std::cout <<"aa "<< a->getUseIdentityProjection()<<std::endl;
+
     }
     //-----------------------------------------------------------------------------------
     void Tutorial_OpenVRGameState::update( float timeSinceLast )

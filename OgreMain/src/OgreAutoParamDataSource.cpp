@@ -37,6 +37,7 @@ THE SOFTWARE.
 #include "OgreRenderSystem.h"
 #include "OgreMatrix4.h"
 #include "OgreVector4.h"
+#include "OgreRectangle2D2.h"
 #include "OgreColourValue.h"
 #include "OgreSceneNode.h"
 #include "OgrePass.h"
@@ -44,6 +45,8 @@ THE SOFTWARE.
 #include "OgreHlmsComputeJob.h"
 
 #include "Compositor/OgreCompositorShadowNode.h"
+
+#include <iostream>
 
 namespace Ogre {
     const Matrix4 PROJECTIONCLIPSPACE2DTOIMAGESPACE_PERSPECTIVE(
@@ -319,9 +322,9 @@ namespace Ogre {
                 mViewMatrix = Matrix4::IDENTITY;
             else
             {
-                mViewMatrix = mCurrentCamera->getViewMatrix(true);
+                mViewMatrix = mCurrentCamera->getVrViewMatrix(0);
             }
-            mViewMatrixDirty = false;
+            //mViewMatrixDirty = false;
         }
         return mViewMatrix;
     }
@@ -331,7 +334,7 @@ namespace Ogre {
         if (mViewProjMatrixDirty)
         {
             mViewProjMatrix = getProjectionMatrix() * getViewMatrix();
-            mViewProjMatrixDirty = false;
+            //mViewProjMatrixDirty = false;
         }
         return mViewProjMatrix;
     }
@@ -342,6 +345,12 @@ namespace Ogre {
         {
             // NB use API-independent projection matrix since GPU programs
             // bypass the API-specific handedness and use right-handed coords
+
+        	auto r = dynamic_cast<const Ogre::Rectangle2D*>(mCurrentRenderable);
+        	if (r)
+        	{
+        		std::cout<<r->getName()<<" "<<mCurrentRenderable->getUseIdentityProjection()<<" "<<mCurrentRenderable->getUseIdentityView()<<std::endl;;
+        	}
             if (mCurrentRenderable && mCurrentRenderable->getUseIdentityProjection())
             {
                 // Use identity projection matrix, still need to take RS depth into account.
@@ -355,7 +364,9 @@ namespace Ogre {
             }
             else
             {
-                mProjectionMatrix = mCurrentCamera->getProjectionMatrixWithRSDepth();
+
+                mProjectionMatrix = mCurrentCamera->getVrProjectionMatrix(0);
+                
             }
             if (mCurrentRenderPassDesc && mCurrentRenderPassDesc->requiresTextureFlipping())
             {
@@ -366,9 +377,10 @@ namespace Ogre {
                 mProjectionMatrix[1][2] = -mProjectionMatrix[1][2];
                 mProjectionMatrix[1][3] = -mProjectionMatrix[1][3];
             }
-            mProjMatrixDirty = false;
+            //mProjMatrixDirty = false;
         }
-        return mProjectionMatrix;
+
+		return mProjectionMatrix;
     }
     //-----------------------------------------------------------------------------
     const Matrix4& AutoParamDataSource::getWorldViewMatrix(void) const
@@ -376,7 +388,7 @@ namespace Ogre {
         if (mWorldViewMatrixDirty)
         {
             mWorldViewMatrix = getViewMatrix().concatenateAffine(getWorldMatrix());
-            mWorldViewMatrixDirty = false;
+            //mWorldViewMatrixDirty = false;
         }
         return mWorldViewMatrix;
     }
@@ -386,7 +398,7 @@ namespace Ogre {
         if (mWorldViewProjMatrixDirty)
         {
             mWorldViewProjMatrix = getProjectionMatrix() * getWorldViewMatrix();
-            mWorldViewProjMatrixDirty = false;
+            //mWorldViewProjMatrixDirty = false;
         }
         return mWorldViewProjMatrix;
     }
@@ -396,7 +408,7 @@ namespace Ogre {
         if (mInverseWorldMatrixDirty)
         {
             mInverseWorldMatrix = getWorldMatrix().inverseAffine();
-            mInverseWorldMatrixDirty = false;
+            //mInverseWorldMatrixDirty = false;
         }
         return mInverseWorldMatrix;
     }
@@ -406,7 +418,7 @@ namespace Ogre {
         if (mInverseWorldViewMatrixDirty)
         {
             mInverseWorldViewMatrix = getWorldViewMatrix().inverseAffine();
-            mInverseWorldViewMatrixDirty = false;
+            //mInverseWorldViewMatrixDirty = false;
         }
         return mInverseWorldViewMatrix;
     }
@@ -416,7 +428,7 @@ namespace Ogre {
         if (mInverseViewMatrixDirty)
         {
             mInverseViewMatrix = getViewMatrix().inverseAffine();
-            mInverseViewMatrixDirty = false;
+            //mInverseViewMatrixDirty = false;
         }
         return mInverseViewMatrix;
     }
@@ -426,7 +438,7 @@ namespace Ogre {
         if (mInverseTransposeWorldMatrixDirty)
         {
             mInverseTransposeWorldMatrix = getInverseWorldMatrix().transpose();
-            mInverseTransposeWorldMatrixDirty = false;
+            //mInverseTransposeWorldMatrixDirty = false;
         }
         return mInverseTransposeWorldMatrix;
     }
@@ -436,7 +448,7 @@ namespace Ogre {
         if (mInverseTransposeWorldViewMatrixDirty)
         {
             mInverseTransposeWorldViewMatrix = getInverseWorldViewMatrix().transpose();
-            mInverseTransposeWorldViewMatrixDirty = false;
+            //mInverseTransposeWorldViewMatrixDirty = false;
         }
         return mInverseTransposeWorldViewMatrix;
     }
@@ -450,7 +462,7 @@ namespace Ogre {
             mCameraPosition[1] = vec3[1];
             mCameraPosition[2] = vec3[2];
             mCameraPosition[3] = 1.0;
-            mCameraPositionDirty = false;
+            //mCameraPositionDirty = false;
         }
         return mCameraPosition;
     }    
@@ -461,7 +473,7 @@ namespace Ogre {
         {
             mCameraPositionObjectSpace = 
                     getInverseWorldMatrix().transformAffine(mCurrentCamera->getDerivedPosition());
-            mCameraPositionObjectSpaceDirty = false;
+            //mCameraPositionObjectSpaceDirty = false;
         }
         return mCameraPositionObjectSpace;
     }
@@ -475,7 +487,7 @@ namespace Ogre {
             mLodCameraPosition[1] = vec3[1];
             mLodCameraPosition[2] = vec3[2];
             mLodCameraPosition[3] = 1.0;
-            mLodCameraPositionDirty = false;
+            //mLodCameraPositionDirty = false;
         }
         return mLodCameraPosition;
     }
@@ -486,7 +498,7 @@ namespace Ogre {
         {
             mLodCameraPositionObjectSpace = 
                 getInverseWorldMatrix().transformAffine(mCurrentCamera->getLodCamera()->getDerivedPosition());
-            mLodCameraPositionObjectSpaceDirty = false;
+            //mLodCameraPositionObjectSpaceDirty = false;
         }
         return mLodCameraPositionObjectSpace;
     }
@@ -717,6 +729,7 @@ namespace Ogre {
         {
             if (mTextureViewProjMatrixDirty[index] && mCurrentTextureProjector[index])
             {
+            	std::cout<<"getTextureViewProjMatrix"<<mCurrentTextureProjector[index]->getName()<<std::endl;
                 mTextureViewProjMatrix[index] = 
                     PROJECTIONCLIPSPACE2DTOIMAGESPACE_PERSPECTIVE * 
                     mCurrentTextureProjector[index]->getProjectionMatrixWithRSDepth() * 
@@ -737,7 +750,7 @@ namespace Ogre {
             {
                 mTextureWorldViewProjMatrix[index] = 
                     getTextureViewProjMatrix(index) * getWorldMatrix();
-                mTextureWorldViewProjMatrixDirty[index] = false;
+                //mTextureWorldViewProjMatrixDirty[index] = false;
             }
             return mTextureWorldViewProjMatrix[index];
         }
@@ -1168,7 +1181,7 @@ namespace Ogre {
             else
                 mSceneDepthRange = dummy;
 
-            mSceneDepthRangeDirty = false;
+            //mSceneDepthRangeDirty = false;
         }
 
         return mSceneDepthRange;

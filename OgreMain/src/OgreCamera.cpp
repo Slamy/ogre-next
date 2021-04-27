@@ -36,6 +36,8 @@ THE SOFTWARE.
 #include "OgreMovablePlane.h"
 #include "OgreSceneNode.h"
 
+#include <iostream>
+
 namespace Ogre {
 
     String Camera::msMovableType = "Camera";
@@ -824,16 +826,34 @@ namespace Ogre {
     {
         Matrix4 retVal = getViewMatrix( true );
         if( mVrData )
+        {
             retVal = mVrData->mHeadToEye[eyeIdx].concatenateAffine( retVal );
+            //std::cout<<getName()<<" Jo2!\n";
+        }
+        else
+        {
+        	//std::cout<<getName()<<" Ne2!\n";
+        }
+
         return retVal;
     }
     //-----------------------------------------------------------------------
     Matrix4 Camera::getVrProjectionMatrix( size_t eyeIdx ) const
     {
+
         if( mVrData )
+        //if (0)
+        {
+        	//std::cout<<getName()<<" Jo!\n";
+        	std::cout<<"1 "<<getProjectionMatrixWithRSDepth()[0][0]<<" 2 "<<mVrData->mProjectionMatrix[0][0][0]<<"\n";
+
             return mVrData->mProjectionMatrix[eyeIdx];
+        }
         else
+        {
+        	//std::cout<<getName()<<" Ne!\n";
             return getProjectionMatrixWithRSDepth();
+        }
     }
     //-----------------------------------------------------------------------
     bool Camera::getAutoAspectRatio(void) const

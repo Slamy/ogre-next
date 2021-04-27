@@ -37,6 +37,12 @@ namespace Demo
         memset( &mVrData, 0, sizeof( mVrData ) );
 
         mCamera->setVrData( &mVrData );
+
+        mVrCullCamera->setName("CullCam");
+        mCamera->setName("NormalCam");
+
+        mCamera->setFOVy(Ogre::Degree(10));
+
         syncCameraProjection( true );
 
         mRoot->addFrameListener( this );
@@ -130,7 +136,7 @@ namespace Demo
         const Ogre::Real camNear = mCamera->getNearClipDistance();
         const Ogre::Real camFar  = mCamera->getFarClipDistance();
 
-        if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
+        //if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
         {
             Ogre::Matrix4 eyeToHead[2];
             Ogre::Matrix4 projectionMatrix[2];
@@ -149,7 +155,8 @@ namespace Demo
                 mHMD->GetProjectionRaw( eyeIdx, &eyeFrustumExtents[i].x, &eyeFrustumExtents[i].y,
                                         &eyeFrustumExtents[i].z, &eyeFrustumExtents[i].w );
             }
-
+            //projectionMatrixRS[0][0][0]*=10;
+            //projectionMatrixRS[1][0][0]*=10;
             mVrData.set( eyeToHead, projectionMatrixRS );
             mLastCamNear = camNear;
             mLastCamFar = camFar;

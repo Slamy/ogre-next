@@ -195,6 +195,10 @@ namespace Demo
         //Change the roughness of the default datablock to something prettier.
         static_cast<Ogre::HlmsPbsDatablock*>( pbs->getDefaultDatablock() )->setRoughness( 0.1f );
 
+        sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "SaintPetersBasilica.dds",
+						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
+
+
         TutorialGameState::createScene01();
     }
     //-----------------------------------------------------------------------------------

@@ -51,6 +51,7 @@ THE SOFTWARE.
 #include "OgreShadowCameraSetupPSSM.h"
 
 #include "OgreLogManager.h"
+#include <iostream>
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
     #include <intrin.h>

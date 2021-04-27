@@ -1009,6 +1009,7 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
                               Rectangle2D::GeometryFlagQuad | Rectangle2D::GeometryFlagNormals );
             mSky->setGeometry( -Ogre::Vector2::UNIT_SCALE, Ogre::Vector2( 2.0f ) );
             mSky->setRenderQueueGroup( 212u ); // Render after most stuff
+            mSky->setName("MrSkyMan");
             mSceneRoot[SCENE_STATIC]->attachObject( mSky );
         }
 

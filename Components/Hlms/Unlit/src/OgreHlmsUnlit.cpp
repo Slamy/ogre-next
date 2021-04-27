@@ -656,7 +656,7 @@ namespace Ogre
         mConstantBiasScale = cameras.renderingCamera->_getConstantBiasScale();
         Matrix4 viewMatrix = cameras.renderingCamera->getViewMatrix(true);
 
-        Matrix4 projectionMatrix = cameras.renderingCamera->getProjectionMatrixWithRSDepth();
+        Matrix4 projectionMatrix = cameras.renderingCamera->getVrProjectionMatrix(0);
         Matrix4 identityProjMat;
 
         mRenderSystem->_convertProjectionMatrix( Matrix4::IDENTITY, identityProjMat );

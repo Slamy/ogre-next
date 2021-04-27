@@ -1658,7 +1658,7 @@ namespace Ogre
         mConstantBiasScale = cameras.renderingCamera->_getConstantBiasScale();
         Matrix4 viewMatrix = cameras.renderingCamera->getVrViewMatrix( 0 );
 
-        Matrix4 projectionMatrix = cameras.renderingCamera->getProjectionMatrixWithRSDepth();
+        Matrix4 projectionMatrix = cameras.renderingCamera->getVrProjectionMatrix(0);
         RenderPassDescriptor *renderPassDesc = mRenderSystem->getCurrentPassDescriptor();
 
         if( renderPassDesc->requiresTextureFlipping() )
@@ -1939,7 +1939,13 @@ namespace Ogre
             for( size_t eyeIdx=0u; eyeIdx<2u; ++eyeIdx )
             {
                 vrViewMat[eyeIdx] = cameras.renderingCamera->getVrViewMatrix( eyeIdx );
+
+                //not
                 Matrix4 vrProjMat = cameras.renderingCamera->getVrProjectionMatrix( eyeIdx );
+
+                //works
+                //Matrix4 vrProjMat = cameras.renderingCamera->getProjectionMatrixWithRSDepth( );
+
                 if( renderPassDesc->requiresTextureFlipping() )
                 {
                     vrProjMat[1][0] = -vrProjMat[1][0];

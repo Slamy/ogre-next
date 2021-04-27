@@ -476,7 +476,7 @@ endif ()
 target_link_libraries(OgreMain ${LIBRARIES})
 if (MINGW)
   # may need winsock htons functions for FreeImage
-  target_link_libraries(OgreMain ws2_32)
+  target_link_libraries(OgreMain ws2_32 )
 endif ()
 
 #set_source_files_properties( ${SOURCE_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)

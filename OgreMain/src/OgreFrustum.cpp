@@ -42,6 +42,9 @@ THE SOFTWARE.
 
 #include "Math/Array/OgreArrayMatrixAf4x3.h"
 
+#include <iostream>
+
+
 namespace Ogre {
 
     String Frustum::msMovableType = "Frustum";
@@ -203,6 +206,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const Matrix4& Frustum::getProjectionMatrixWithRSDepth(void) const
     {
+
+    	if (getName()=="NormalCam")
+    	{
+    		std::cout<<getName() << " Barf!\n";
+    	}
 
         updateFrustum();
 

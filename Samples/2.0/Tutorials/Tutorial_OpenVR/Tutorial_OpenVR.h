@@ -10,7 +10,7 @@
         #define nullptr (0)
     #endif
 #endif
-#include "openvr.h"
+#include "openvr_mingw.hpp"
 #if __cplusplus <= 199711L
     #ifdef OgreDemoNullptrDefined
         #undef OgreDemoNullptrDefined

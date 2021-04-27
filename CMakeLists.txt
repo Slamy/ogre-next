@@ -597,6 +597,9 @@ mark_as_advanced(
   OGRE_LIB_DIRECTORY
 )
 
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
 ###################################################################
 # configure global build settings based on selected build options
 ###################################################################
