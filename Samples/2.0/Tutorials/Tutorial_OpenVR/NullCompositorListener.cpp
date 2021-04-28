@@ -1,15 +1,14 @@
 
 #include "NullCompositorListener.h"
 
+#include <iostream>
+
+#include "Compositor/OgreCompositorWorkspace.h"
 #include "Compositor/Pass/OgreCompositorPass.h"
 #include "Compositor/Pass/OgreCompositorPassDef.h"
 #include "Compositor/Pass/PassScene/OgreCompositorPassScene.h"
 #include "OgreRenderSystem.h"
 #include "OgreTextureGpu.h"
-
-#include "Compositor/OgreCompositorWorkspace.h"
-
-#include <iostream>
 
 namespace Demo
 {
@@ -30,8 +29,8 @@ namespace Demo
         memset( &mVrData, 0, sizeof( mVrData ) );
 
         mCamera->setVrData( &mVrData );
-        mVrCullCamera->setName("CullCam");
-        mCamera->setName("NormalCam");
+        mVrCullCamera->setName( "CullCam" );
+        mCamera->setName( "NormalCam" );
 
         syncCameraProjection( true );
 
@@ -61,31 +60,45 @@ namespace Demo
         const Ogre::Real camNear = mCamera->getNearClipDistance();
         const Ogre::Real camFar = mCamera->getFarClipDistance();
 
-
-        //if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
+        if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
         {
             Ogre::Matrix4 eyeToHead[2] = { Ogre::Matrix4::IDENTITY, Ogre::Matrix4::IDENTITY };
             Ogre::Matrix4 projectionMatrixRS[2] = { mCamera->getProjectionMatrixWithRSDepth(),
                                                     mCamera->getProjectionMatrixWithRSDepth() };
 
-			projectionMatrixRS[0][0][0]*=3;
-			projectionMatrixRS[1][0][0]*=3;
-			
+            // projectionMatrixRS[0][0][0] *= 6;
+            // projectionMatrixRS[1][0][0] *= 6;
+
             mVrData.set( eyeToHead, projectionMatrixRS );
 
-            //std::cout<<"XX 1 "<<mCamera->getProjectionMatrixWithRSDepth()[0][0]<<" 2 "<<mCamera->getVrData()->mProjectionMatrix[0][0][0]<<"\n";
+            projectionMatrixRS[0][0][0] = -projectionMatrixRS[0][0][0];
+            projectionMatrixRS[0][0][1] = -projectionMatrixRS[0][0][1];
+            projectionMatrixRS[0][0][2] = -projectionMatrixRS[0][0][2];
+            projectionMatrixRS[0][0][3] = -projectionMatrixRS[0][0][3];
+
+            projectionMatrixRS[0][1][0] = -projectionMatrixRS[0][1][0];
+            projectionMatrixRS[0][1][1] = -projectionMatrixRS[0][1][1];
+            projectionMatrixRS[0][1][2] = -projectionMatrixRS[0][1][2];
+            projectionMatrixRS[0][1][3] = -projectionMatrixRS[0][1][3];
+
+            mCamera->setCustomProjectionMatrix( true, projectionMatrixRS[0], false );
+
+            // std::cout<<"XX 1 "<<mCamera->getProjectionMatrixWithRSDepth()[0][0]<<" 2
+            // "<<mCamera->getVrData()->mProjectionMatrix[0][0][0]<<"\n";
 
             mLastCamNear = camNear;
             mLastCamFar = camFar;
 
             mCullCameraOffset = Ogre::Vector3::ZERO;
 
-            mCamera->setFOVy(Ogre::Degree(10));
-
             mVrCullCamera->setNearClipDistance( camNear );
             mVrCullCamera->setFarClipDistance( camFar );
             mVrCullCamera->setFOVy( mCamera->getFOVy() );
         }
+
+        static int cnt = 0;
+        cnt++;
+        mCamera->setFOVy( Ogre::Degree( 20 + ( ( cnt / 8 ) % 40 ) ) );
     }
     //-------------------------------------------------------------------------
     bool NullCompositorListener::frameStarted( const Ogre::FrameEvent &evt ) { return true; }
