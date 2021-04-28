@@ -1,7 +1,10 @@
 #version ogre_glsl_ver_330
+#extension GL_ARB_shader_viewport_layer_array : require
 
 vulkan_layout( OGRE_POSITION )	in vec2 vertex;
 vulkan_layout( OGRE_NORMAL )	in vec3 normal;
+
+in uint drawId;
 
 vulkan( layout( ogre_P0 ) uniform Params { )
 	uniform vec2 rsDepthRange;
@@ -25,4 +28,6 @@ void main()
 	gl_Position.z = rsDepthRange.y;
 	gl_Position.w = 1.0f;
 	outVs.cameraDir.xyz	= normal.xyz;
+	
+	gl_ViewportIndex	= int( drawId & 0x01u );
 }

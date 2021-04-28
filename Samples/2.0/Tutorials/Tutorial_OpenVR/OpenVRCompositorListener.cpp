@@ -151,6 +151,11 @@ namespace Demo
             }
 
             mVrData.set( eyeToHead, projectionMatrixRS );
+
+            mCamera->setFrustumExtents( eyeFrustumExtents[0].x, eyeFrustumExtents[0].y,
+            		eyeFrustumExtents[0].w, eyeFrustumExtents[0].z,
+                                              Ogre::FET_TAN_HALF_ANGLES );
+
             mLastCamNear = camNear;
             mLastCamFar = camFar;
 
