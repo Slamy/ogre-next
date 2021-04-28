@@ -1421,7 +1421,7 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
             }
             else
             {
-				corners = camera->getVrWorldSpaceCorners(0);
+				corners = camera->getWorldSpaceCorners();
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
 				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
 				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;

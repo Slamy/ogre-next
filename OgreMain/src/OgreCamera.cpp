@@ -909,8 +909,6 @@ namespace Ogre {
         mVrData->mRight[eyeIdx] = right;
         mVrData->mTop[eyeIdx] = top;
         mVrData->mBottom[eyeIdx] = bottom;
-
-        invalidateFrustum();
     }
 
     //-----------------------------------------------------------------------
