@@ -49,6 +49,14 @@ namespace Ogre {
         //Matrix4 mLeftToRight;
         Vector3 mLeftToRight;
 
+        /// Whether to treat frustum extents as tangents of the angles between the viewing
+        /// vector and the edges of the field of view or as positions on the projection plane
+        FrustrumExtentsType mFrustrumExtentsType[2];
+        /// Frustum extents
+        Real mLeft[2], mRight[2], mTop[2], mBottom[2];
+
+        Vector3 mWorldSpaceCorners[2][8];
+
         void set( const Matrix4 eyeToHead[2], const Matrix4 projectionMatrix[2] )
         {
             for( int i=0; i<2; ++i )
@@ -244,6 +252,9 @@ namespace Ogre {
         static void setDefaultSortMode( CameraSortMode sortMode ) { msDefaultSortMode = sortMode; }
         static CameraSortMode getDefaultSortMode( void ) { return msDefaultSortMode; }
 
+        void setVrFrustumExtents(size_t eyeIdx, Real left, Real right, Real top, Real bottom,
+                                                FrustrumExtentsType frustrumExtentsType = FET_PROJ_PLANE_POS);
+
     protected:
         // Internal functions for calcs
         bool isViewOutOfDate(void) const;
@@ -262,6 +273,7 @@ namespace Ogre {
         /** Helper function for forwardIntersect that intersects rays with canonical plane */
         virtual vector<Vector4>::type getRayForwardIntersect(const Vector3& anchor, const Vector3 *dir, Real planeOffset) const;
 
+        void updateWorldSpaceCornersImpl(void) const override;
     public:
         /** Standard constructor.
         */
@@ -700,6 +712,8 @@ namespace Ogre {
         bool isVisible(const Vector3& vert, FrustumPlane* culledBy = 0) const;
         /// @copydoc Frustum::getWorldSpaceCorners
         const Vector3* getWorldSpaceCorners(void) const;
+
+        const Vector3* getVrWorldSpaceCorners(size_t eyeIdx) const;
         /// @copydoc Frustum::getFrustumPlane
         const Plane& getFrustumPlane( unsigned short plane ) const;
         /// @copydoc Frustum::projectSphere

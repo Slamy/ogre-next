@@ -148,6 +148,11 @@ namespace Demo
                                                                projectionMatrixRS[i] );
                 mHMD->GetProjectionRaw( eyeIdx, &eyeFrustumExtents[i].x, &eyeFrustumExtents[i].y,
                                         &eyeFrustumExtents[i].z, &eyeFrustumExtents[i].w );
+
+                mCamera->setVrFrustumExtents( i,eyeFrustumExtents[i].x, eyeFrustumExtents[i].y,
+                            		eyeFrustumExtents[i].w, eyeFrustumExtents[i].z,
+                                                              Ogre::FET_TAN_HALF_ANGLES );
+
             }
 
             mVrData.set( eyeToHead, projectionMatrixRS );

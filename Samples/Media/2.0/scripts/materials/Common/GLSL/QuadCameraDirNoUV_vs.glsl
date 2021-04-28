@@ -4,9 +4,8 @@
 vulkan_layout( OGRE_POSITION )	in vec2 vertex;
 vulkan_layout( OGRE_NORMAL )	in vec3 normal;
 
-in uint drawId;
-
 vulkan( layout( ogre_P0 ) uniform Params { )
+	uniform float ogreBaseVertex;
 	uniform vec2 rsDepthRange;
 	uniform mat4 worldViewProj;
 vulkan( }; )
@@ -29,5 +28,5 @@ void main()
 	gl_Position.w = 1.0f;
 	outVs.cameraDir.xyz	= normal.xyz;
 	
-	gl_ViewportIndex	= int( drawId & 0x01u );
+	gl_ViewportIndex = (gl_VertexID - ogreBaseVertex) >= ( 4) ? 1 : 0;
 }

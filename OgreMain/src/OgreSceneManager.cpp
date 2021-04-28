@@ -1005,8 +1005,13 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
                                          &mEntityMemoryManager[SCENE_STATIC], this );
             // We can't use BT_DYNAMIC_* because the scene may be rendered from multiple cameras
             // in the same frame, and dynamic supports only one set of values per frame
-            mSky->initialize( BT_DEFAULT,
-                              Rectangle2D::GeometryFlagQuad | Rectangle2D::GeometryFlagNormals );
+
+
+			uint32 skyGeometryFlags=Rectangle2D::GeometryFlagQuad | Rectangle2D::GeometryFlagNormals;
+
+			if (isUsingInstancedStereo())
+				skyGeometryFlags|=Rectangle2D::GeometryFlagStereo;
+            mSky->initialize( BT_DEFAULT,skyGeometryFlags);
             mSky->setGeometry( -Ogre::Vector2::UNIT_SCALE, Ogre::Vector2( 2.0f ) );
             mSky->setRenderQueueGroup( 212u ); // Render after most stuff
             mSceneRoot[SCENE_STATIC]->attachObject( mSky );
@@ -1056,6 +1061,13 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
             GpuProgramParametersSharedPtr psParams = pass->getFragmentProgramParameters();
             psParams->setNamedConstant( "sliceIdx", (float)texture->getInternalSliceStart() );
         }
+
+        GpuProgramParametersSharedPtr vsParams = pass->getVertexProgramParameters();
+        vsParams->setNamedConstant( "ogreBaseVertex", (float)mSky->getVaos( VpNormal )
+                                                          .back()
+                                                          ->getBaseVertexBuffer()
+                                                          ->_getFinalBufferStart() );
+
 
         TextureUnitState *tu = pass->getTextureUnitState( 0 );
         // Ensure we don't accidentally clone the texture (minimize
@@ -1381,18 +1393,41 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
 
         if( mSky && mIlluminationStage != IRS_RENDER_TO_TEXTURE )
         {
-            const Vector3 *corners = camera->getWorldSpaceCorners();
+            const Vector3 *corners;
             const Vector3 &cameraPos = camera->getDerivedPosition();
-
             const Real invFarPlane = 1.0f / camera->getFarClipDistance();
-            Vector3 cameraDirs[4];
-            cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
-            cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
-            cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;
-            cameraDirs[3] = ( corners[7] - cameraPos ) * invFarPlane;
 
-            mSky->setNormals( cameraDirs[0], cameraDirs[1], cameraDirs[2], cameraDirs[3] );
+            Vector3 cameraDirs[4];
+            if (!isUsingInstancedStereo())
+            {
+				corners = camera->getWorldSpaceCorners();
+				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
+				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
+				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;
+				cameraDirs[3] = ( corners[7] - cameraPos ) * invFarPlane;
+
+				mSky->setNormals( cameraDirs[0], cameraDirs[1], cameraDirs[2], cameraDirs[3] );
+            }
+            else
+            {
+				corners = camera->getVrWorldSpaceCorners(0);
+				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
+				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
+				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;
+				cameraDirs[3] = ( corners[7] - cameraPos ) * invFarPlane;
+
+				mSky->setNormals( cameraDirs[0], cameraDirs[1], cameraDirs[2], cameraDirs[3] );
+
+				corners = camera->getVrWorldSpaceCorners(1);
+				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
+				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
+				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;
+				cameraDirs[3] = ( corners[7] - cameraPos ) * invFarPlane;
+				mSky->setStereoNormals( cameraDirs[0], cameraDirs[1], cameraDirs[2], cameraDirs[3] );
+            }
+
             mSky->update();
+
         }
 
         if( mRadialDensityMask && mIlluminationStage != IRS_RENDER_TO_TEXTURE &&
