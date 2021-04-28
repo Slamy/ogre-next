@@ -60,14 +60,18 @@ namespace Demo
         const Ogre::Real camNear = mCamera->getNearClipDistance();
         const Ogre::Real camFar = mCamera->getFarClipDistance();
 
-        if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
+        //if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
         {
-            Ogre::Matrix4 eyeToHead[2] = { Ogre::Matrix4::IDENTITY, Ogre::Matrix4::IDENTITY };
-            Ogre::Matrix4 projectionMatrixRS[2] = { mCamera->getProjectionMatrixWithRSDepth(),
-                                                    mCamera->getProjectionMatrixWithRSDepth() };
+        	Ogre::Matrix4 projectionMatrixRS[2];
 
-            // projectionMatrixRS[0][0][0] *= 6;
-            // projectionMatrixRS[1][0][0] *= 6;
+        	mCamera->setCustomProjectionMatrix( false, projectionMatrixRS[0], false );
+
+            Ogre::Matrix4 eyeToHead[2] = { Ogre::Matrix4::IDENTITY, Ogre::Matrix4::IDENTITY };
+            projectionMatrixRS[0] =  mCamera->getProjectionMatrixWithRSDepth();
+            projectionMatrixRS[1] =  mCamera->getProjectionMatrixWithRSDepth();
+
+            projectionMatrixRS[0][0][0] *= 6;
+            projectionMatrixRS[1][0][0] *= 6;
 
             mVrData.set( eyeToHead, projectionMatrixRS );
 
@@ -96,9 +100,12 @@ namespace Demo
             mVrCullCamera->setFOVy( mCamera->getFOVy() );
         }
 
+#if 0
         static int cnt = 0;
         cnt++;
         mCamera->setFOVy( Ogre::Degree( 20 + ( ( cnt / 8 ) % 40 ) ) );
+#endif
+
     }
     //-------------------------------------------------------------------------
     bool NullCompositorListener::frameStarted( const Ogre::FrameEvent &evt ) { return true; }

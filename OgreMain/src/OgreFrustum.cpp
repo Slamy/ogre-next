@@ -893,11 +893,15 @@ namespace Ogre {
         Real nearLeft, nearRight, nearBottom, nearTop;
         calcProjectionParameters(nearLeft, nearRight, nearBottom, nearTop);
 
+
         // Treat infinite fardist as some arbitrary far value
         Real farDist = (mFarDist == 0) ? 100000 : mFarDist;
 
         // Calc far palne corners
         Real radio = mProjType == PT_PERSPECTIVE ? farDist / mNearDist : 1;
+
+        printf("Barf %f %f %d %f\n",mFarDist,mNearDist,mProjType,radio);
+
         Real farLeft = nearLeft * radio;
         Real farRight = nearRight * radio;
         Real farBottom = nearBottom * radio;

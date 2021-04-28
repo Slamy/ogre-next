@@ -136,17 +136,21 @@ namespace Demo
         const Ogre::Real camNear = mCamera->getNearClipDistance();
         const Ogre::Real camFar  = mCamera->getFarClipDistance();
 
-        //if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
+        if( mLastCamNear != camNear || mLastCamFar != camFar || bForceUpdate )
         {
-            Ogre::Matrix4 eyeToHead[2];
+            //Ogre::Matrix4 eyeToHead[2];
+            Ogre::Matrix4 eyeToHead[2] = { Ogre::Matrix4::IDENTITY, Ogre::Matrix4::IDENTITY };
             Ogre::Matrix4 projectionMatrix[2];
             Ogre::Matrix4 projectionMatrixRS[2];
             Ogre::Vector4 eyeFrustumExtents[2];
 
+            mCamera->setCustomProjectionMatrix( false, projectionMatrixRS[0], false );
+            mVrCullCamera->setCustomProjectionMatrix( false, projectionMatrixRS[0], false );
+
             for( size_t i=0u; i<2u; ++i )
             {
                 vr::EVREye eyeIdx = static_cast<vr::EVREye>( i );
-                eyeToHead[i] = convertSteamVRMatrixToMatrix4( mHMD->GetEyeToHeadTransform( eyeIdx ) );
+                //eyeToHead[i] = convertSteamVRMatrixToMatrix4( mHMD->GetEyeToHeadTransform( eyeIdx ) );
                 projectionMatrix[i] =
                         convertSteamVRMatrixToMatrix4( mHMD->GetProjectionMatrix( eyeIdx,
                                                                                   camNear, camFar ) );
@@ -157,10 +161,37 @@ namespace Demo
             }
             //projectionMatrixRS[0][0][0]*=10;
             //projectionMatrixRS[1][0][0]*=10;
+
+            //projectionMatrixRS[0] =  mCamera->getProjectionMatrixWithRSDepth();
+            //projectionMatrixRS[1] =  mCamera->getProjectionMatrixWithRSDepth();
+
             mVrData.set( eyeToHead, projectionMatrixRS );
+
+#if 1
+#if 0
+            projectionMatrix[0][0][0] = -projectionMatrix[0][0][0];
+            projectionMatrix[0][0][1] = -projectionMatrix[0][0][1];
+            projectionMatrix[0][0][2] = -projectionMatrix[0][0][2];
+            projectionMatrix[0][0][3] = -projectionMatrix[0][0][3];
+
+            projectionMatrix[0][1][0] = -projectionMatrix[0][1][0];
+            projectionMatrix[0][1][1] = -projectionMatrix[0][1][1];
+            projectionMatrix[0][1][2] = -projectionMatrix[0][1][2];
+            projectionMatrix[0][1][3] = -projectionMatrix[0][1][3];
+#endif
+
+            //mCamera->setCustomProjectionMatrix( true, projectionMatrix[0], true );
+            //mCamera->setNearClipDistance( camNear  );
+            //mCamera->setFarClipDistance( camFar/2  );
+
+
+            //mVrCullCamera->setCustomProjectionMatrix( true, projectionMatrix[0], true );
+#endif
+
             mLastCamNear = camNear;
             mLastCamFar = camFar;
 
+#if 1
             Ogre::Vector4 cameraCullFrustumExtents;
             cameraCullFrustumExtents.x = std::min( eyeFrustumExtents[0].x, eyeFrustumExtents[1].x );
             cameraCullFrustumExtents.y = std::max( eyeFrustumExtents[0].y, eyeFrustumExtents[1].y );
@@ -171,6 +202,11 @@ namespace Demo
                                               cameraCullFrustumExtents.w, cameraCullFrustumExtents.z,
                                               Ogre::FET_TAN_HALF_ANGLES );
 
+            mCamera->setFrustumExtents( eyeFrustumExtents[0].x, eyeFrustumExtents[0].y,
+            		eyeFrustumExtents[0].w, eyeFrustumExtents[0].z,
+                                              Ogre::FET_TAN_HALF_ANGLES );
+
+
             const float ipd = mVrData.mLeftToRight.x;
             mCullCameraOffset = Ogre::Vector3::ZERO;
             mCullCameraOffset.z = (ipd / 2.0f) / Ogre::Math::Abs( cameraCullFrustumExtents.x );
@@ -178,7 +214,23 @@ namespace Demo
             const Ogre::Real offset = mCullCameraOffset.length();
             mVrCullCamera->setNearClipDistance( camNear + offset );
             mVrCullCamera->setFarClipDistance( camFar + offset );
+#endif
+            mCullCameraOffset = Ogre::Vector3::ZERO;
+
+            mVrCullCamera->setNearClipDistance( camNear );
+            mVrCullCamera->setFarClipDistance( camFar );
+            mVrCullCamera->setFOVy( mCamera->getFOVy() );
+
+
+
         }
+
+#if 1
+        static int cnt = 0;
+        cnt++;
+        mCamera->setFOVy( Ogre::Degree( 20 + ( ( cnt / 8 ) % 40 ) ) );
+#endif
+
     }
     //-------------------------------------------------------------------------
     bool OpenVRCompositorListener::frameStarted( const Ogre::FrameEvent& evt )

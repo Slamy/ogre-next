@@ -825,15 +825,7 @@ namespace Ogre {
     Matrix4 Camera::getVrViewMatrix( size_t eyeIdx ) const
     {
         Matrix4 retVal = getViewMatrix( true );
-        if( mVrData )
-        {
-            retVal = mVrData->mHeadToEye[eyeIdx].concatenateAffine( retVal );
-            //std::cout<<getName()<<" Jo2!\n";
-        }
-        else
-        {
-        	//std::cout<<getName()<<" Ne2!\n";
-        }
+
 
         return retVal;
     }
