@@ -1056,7 +1056,6 @@ namespace Ogre {
     {
         updateWorldSpaceCorners();
 
-        printf("BARF!!!\n");
         return mWorldSpaceCorners;
     }
     //-----------------------------------------------------------------------

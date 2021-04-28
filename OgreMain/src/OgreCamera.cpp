@@ -844,7 +844,7 @@ namespace Ogre {
     		return;
     	}
 
-
+    	updateView();
 		Matrix4 eyeToWorld = mViewMatrix.inverseAffine();
 
 		// Note: Even though we can dealing with general projection matrix here,

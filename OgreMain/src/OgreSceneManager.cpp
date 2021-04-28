@@ -1407,6 +1407,8 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
             const Vector3 &cameraPos = camera->getDerivedPosition();
             const Real invFarPlane = 1.0f / camera->getFarClipDistance();
 
+            camera->updateVrWorldSpaceCorners();
+            
             Vector3 cameraDirs[4];
             //if (!isUsingInstancedStereo())
             if (0)

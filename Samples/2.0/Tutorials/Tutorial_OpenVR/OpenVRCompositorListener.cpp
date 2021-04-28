@@ -119,7 +119,6 @@ namespace Demo
         mCamera->setPosition( mDevicePose[vr::k_unTrackedDeviceIndex_Hmd].getTrans() );
         mCamera->setOrientation( mDevicePose[vr::k_unTrackedDeviceIndex_Hmd].extractQuaternion() );
 
-
         if( mWaitingMode < VrWaitingMode::AfterFrustumCulling )
             syncCullCamera();
 
@@ -157,13 +156,6 @@ namespace Demo
             }
 
             mVrData.set( eyeToHead, projectionMatrixRS );
-
-
-#if 0
-            mCamera->setFrustumExtents( eyeFrustumExtents[0].x, eyeFrustumExtents[0].y,
-            		eyeFrustumExtents[0].w, eyeFrustumExtents[0].z,
-                                              Ogre::FET_TAN_HALF_ANGLES );
-#endif
             mLastCamNear = camNear;
             mLastCamFar = camFar;
 
@@ -244,8 +236,6 @@ namespace Demo
                 break;
             }
         }
-
-        mCamera->updateVrWorldSpaceCorners();
 
         return true;
     }
