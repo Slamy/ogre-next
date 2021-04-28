@@ -15,7 +15,14 @@
         #define nullptr (0)
     #endif
 #endif
+
+#ifdef __MINGW32__
 #include "openvr_mingw.hpp"
+#else
+#include "openvr.h"
+#endif
+
+
 #if __cplusplus <= 199711L
     #ifdef OgreDemoNullptrDefined
         #undef OgreDemoNullptrDefined
