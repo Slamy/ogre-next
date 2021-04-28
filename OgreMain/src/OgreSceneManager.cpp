@@ -1009,8 +1009,18 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
 
 			uint32 skyGeometryFlags=Rectangle2D::GeometryFlagQuad | Rectangle2D::GeometryFlagNormals;
 
+			skyGeometryFlags|=Rectangle2D::GeometryFlagStereo;
+
 			if (isUsingInstancedStereo())
-				skyGeometryFlags|=Rectangle2D::GeometryFlagStereo;
+			{
+
+				printf("STEREO!!!!\n");
+			}
+			else
+			{
+				printf("KEIN STEREO!!!!\n");
+			}
+
             mSky->initialize( BT_DEFAULT,skyGeometryFlags);
             mSky->setGeometry( -Ogre::Vector2::UNIT_SCALE, Ogre::Vector2( 2.0f ) );
             mSky->setRenderQueueGroup( 212u ); // Render after most stuff
@@ -1062,13 +1072,6 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
             psParams->setNamedConstant( "sliceIdx", (float)texture->getInternalSliceStart() );
         }
 
-        GpuProgramParametersSharedPtr vsParams = pass->getVertexProgramParameters();
-        vsParams->setNamedConstant( "ogreBaseVertex", (float)mSky->getVaos( VpNormal )
-                                                          .back()
-                                                          ->getBaseVertexBuffer()
-                                                          ->_getFinalBufferStart() );
-
-
         TextureUnitState *tu = pass->getTextureUnitState( 0 );
         // Ensure we don't accidentally clone the texture (minimize
         // mem consumption by being Automatic Batching aware)
@@ -1076,6 +1079,13 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
         tu->setTexture( texture );
 
         mSky->setMaterial( mSkyMaterial );
+
+        GpuProgramParametersSharedPtr vsParams = pass->getVertexProgramParameters();
+        vsParams->setNamedConstant( "ogreBaseVertex", (float)mSky->getVaos( VpNormal )
+                                                          .back()
+                                                          ->getBaseVertexBuffer()
+                                                          ->_getFinalBufferStart() );
+
     }
     else
     {
@@ -1398,7 +1408,8 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
             const Real invFarPlane = 1.0f / camera->getFarClipDistance();
 
             Vector3 cameraDirs[4];
-            if (!isUsingInstancedStereo())
+            //if (!isUsingInstancedStereo())
+            if (0)
             {
 				corners = camera->getWorldSpaceCorners();
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;

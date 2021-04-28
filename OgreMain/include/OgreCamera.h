@@ -255,6 +255,7 @@ namespace Ogre {
         void setVrFrustumExtents(size_t eyeIdx, Real left, Real right, Real top, Real bottom,
                                                 FrustrumExtentsType frustrumExtentsType = FET_PROJ_PLANE_POS);
 
+        void updateVrWorldSpaceCorners();
     protected:
         // Internal functions for calcs
         bool isViewOutOfDate(void) const;
@@ -273,7 +274,6 @@ namespace Ogre {
         /** Helper function for forwardIntersect that intersects rays with canonical plane */
         virtual vector<Vector4>::type getRayForwardIntersect(const Vector3& anchor, const Vector3 *dir, Real planeOffset) const;
 
-        void updateWorldSpaceCornersImpl(void) const override;
     public:
         /** Standard constructor.
         */

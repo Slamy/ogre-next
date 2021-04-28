@@ -836,72 +836,73 @@ namespace Ogre {
             return getProjectionMatrixWithRSDepth();
     }
 
-    void Camera::updateWorldSpaceCornersImpl(void) const
+    void Camera::updateVrWorldSpaceCorners()
     {
-    	if( mVrData )
+    	if( !mVrData )
+    	{
+    		exit(1);
+    		return;
+    	}
+
+
+		Matrix4 eyeToWorld = mViewMatrix.inverseAffine();
+
+		// Note: Even though we can dealing with general projection matrix here,
+		//       but because it's incompatibly with infinite far plane, thus, we
+		//       still need to working with projection parameters.
+
+		// Calc near plane corners
+
+		for( size_t eyeIdx=0u; eyeIdx<2u; ++eyeIdx )
 		{
-    		Matrix4 eyeToWorld = mViewMatrix.inverseAffine();
+			Real nearLeft, nearRight, nearBottom, nearTop;
+			nearLeft = mVrData->mLeft[eyeIdx];
+			nearRight = mVrData->mRight[eyeIdx];
+			nearTop = mVrData->mTop[eyeIdx];
+			nearBottom = mVrData->mBottom[eyeIdx];
 
-			// Note: Even though we can dealing with general projection matrix here,
-			//       but because it's incompatibly with infinite far plane, thus, we
-			//       still need to working with projection parameters.
-
-			// Calc near plane corners
-
-    		for( size_t eyeIdx=0u; eyeIdx<2u; ++eyeIdx )
+			if (mVrData->mFrustrumExtentsType[eyeIdx] == FET_TAN_HALF_ANGLES)
 			{
-				Real nearLeft, nearRight, nearBottom, nearTop;
-				nearLeft = mVrData->mLeft[eyeIdx];
-				nearRight = mVrData->mRight[eyeIdx];
-				nearTop = mVrData->mTop[eyeIdx];
-				nearBottom = mVrData->mBottom[eyeIdx];
-
-				if (mFrustrumExtentsType == FET_TAN_HALF_ANGLES)
-				{
-					nearLeft    *= mNearDist;
-					nearRight   *= mNearDist;
-					nearTop     *= mNearDist;
-					nearBottom  *= mNearDist;
-				}
-
-
-				// Treat infinite fardist as some arbitrary far value
-				Real farDist = (mFarDist == 0) ? 100000 : mFarDist;
-
-				// Calc far palne corners
-				Real radio = mProjType == PT_PERSPECTIVE ? farDist / mNearDist : 1;
-				Real farLeft = nearLeft * radio;
-				Real farRight = nearRight * radio;
-				Real farBottom = nearBottom * radio;
-				Real farTop = nearTop * radio;
-
-				// near
-				mVrData->mWorldSpaceCorners[eyeIdx][0] = eyeToWorld.transformAffine(Vector3(nearRight, nearTop,    -mNearDist));
-				mVrData->mWorldSpaceCorners[eyeIdx][1] = eyeToWorld.transformAffine(Vector3(nearLeft,  nearTop,    -mNearDist));
-				mVrData->mWorldSpaceCorners[eyeIdx][2] = eyeToWorld.transformAffine(Vector3(nearLeft,  nearBottom, -mNearDist));
-				mVrData->mWorldSpaceCorners[eyeIdx][3] = eyeToWorld.transformAffine(Vector3(nearRight, nearBottom, -mNearDist));
-				// far
-				mVrData->mWorldSpaceCorners[eyeIdx][4] = eyeToWorld.transformAffine(Vector3(farRight,  farTop,     -farDist));
-				mVrData->mWorldSpaceCorners[eyeIdx][5] = eyeToWorld.transformAffine(Vector3(farLeft,   farTop,     -farDist));
-				mVrData->mWorldSpaceCorners[eyeIdx][6] = eyeToWorld.transformAffine(Vector3(farLeft,   farBottom,  -farDist));
-				mVrData->mWorldSpaceCorners[eyeIdx][7] = eyeToWorld.transformAffine(Vector3(farRight,  farBottom,  -farDist));
+				nearLeft    *= mNearDist;
+				nearRight   *= mNearDist;
+				nearTop     *= mNearDist;
+				nearBottom  *= mNearDist;
 			}
 
-			mRecalcWorldSpaceCorners = false;
+
+			// Treat infinite fardist as some arbitrary far value
+			Real farDist = (mFarDist == 0) ? 100000 : mFarDist;
+
+			// Calc far palne corners
+			Real radio = mProjType == PT_PERSPECTIVE ? farDist / mNearDist : 1;
+			Real farLeft = nearLeft * radio;
+			Real farRight = nearRight * radio;
+			Real farBottom = nearBottom * radio;
+			Real farTop = nearTop * radio;
+
+			// near
+			mVrData->mWorldSpaceCorners[eyeIdx][0] = eyeToWorld.transformAffine(Vector3(nearRight, nearTop,    -mNearDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][1] = eyeToWorld.transformAffine(Vector3(nearLeft,  nearTop,    -mNearDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][2] = eyeToWorld.transformAffine(Vector3(nearLeft,  nearBottom, -mNearDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][3] = eyeToWorld.transformAffine(Vector3(nearRight, nearBottom, -mNearDist));
+			// far
+			mVrData->mWorldSpaceCorners[eyeIdx][4] = eyeToWorld.transformAffine(Vector3(farRight,  farTop,     -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][5] = eyeToWorld.transformAffine(Vector3(farLeft,   farTop,     -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][6] = eyeToWorld.transformAffine(Vector3(farLeft,   farBottom,  -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][7] = eyeToWorld.transformAffine(Vector3(farRight,  farBottom,  -farDist));
 		}
-		else
-		{
-			Frustum::updateWorldSpaceCornersImpl();
-		}
+
     }
 
     void Camera::setVrFrustumExtents( size_t eyeIdx, Real left, Real right, Real top, Real bottom,
                                      FrustrumExtentsType frustrumExtentsType)
     {
-    	if( !mVrData )
-    		return;
 
-        mFrustumExtentsManuallySet = true;
+    	if( !mVrData )
+    	{
+    		exit(1);
+    		return;
+    	}
 
         mVrData->mFrustrumExtentsType[eyeIdx] = frustrumExtentsType;
         mVrData->mLeft[eyeIdx] = left;
@@ -979,9 +980,8 @@ namespace Ogre {
     	}
     	else
     	{
-    	return getWorldSpaceCorners();
+    		return getWorldSpaceCorners();
     	}
-
     }
     //-----------------------------------------------------------------------
     const Plane& Camera::getFrustumPlane( unsigned short plane ) const
