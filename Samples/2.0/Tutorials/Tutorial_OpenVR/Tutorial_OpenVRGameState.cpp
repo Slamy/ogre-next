@@ -136,7 +136,7 @@ namespace Demo
                 mSceneNode[idx] = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )->
                         createChildSceneNode( Ogre::SCENE_DYNAMIC );
 
-                mSceneNode[idx]->setPosition( (i - 1.5f) * armsLength,
+                mSceneNode[idx]->setPosition( -100+(i - 1.5f) * armsLength,
                                               2.0f,
                                               (j - 1.5f) * armsLength );
                 mSceneNode[idx]->setScale( 0.65f, 0.65f, 0.65f );
@@ -201,7 +201,7 @@ namespace Demo
 
                     Ogre::SceneNode *sceneNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )->
                             createChildSceneNode( Ogre::SCENE_DYNAMIC );
-                    sceneNode->setPosition( Ogre::Vector3( armsLength * x - startX,
+                    sceneNode->setPosition( Ogre::Vector3( -100+armsLength * x - startX,
                                                            1.0f,
                                                            armsLength * z - startZ ) );
                     sceneNode->attachObject( item );

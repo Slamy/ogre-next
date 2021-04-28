@@ -1009,7 +1009,7 @@ void SceneManager::setSky( bool bEnabled, SkyMethod skyMethod, TextureGpu *textu
 
 			uint32 skyGeometryFlags=Rectangle2D::GeometryFlagQuad | Rectangle2D::GeometryFlagNormals;
 
-			//skyGeometryFlags|=Rectangle2D::GeometryFlagStereo;
+			skyGeometryFlags|=Rectangle2D::GeometryFlagStereo;
 
 			if (isUsingInstancedStereo())
 			{
@@ -1409,9 +1409,9 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
 
             Vector3 cameraDirs[4];
             //if (!isUsingInstancedStereo())
-            if (1)
+            if (0)
             {
-				corners = camera->getWorldSpaceCorners();
+				corners = camera->getVrWorldSpaceCorners(0);
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
 				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
 				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;
@@ -1421,7 +1421,7 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
             }
             else
             {
-				corners = camera->getWorldSpaceCorners();
+				corners = camera->getVrWorldSpaceCorners(0);
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
 				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
 				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;

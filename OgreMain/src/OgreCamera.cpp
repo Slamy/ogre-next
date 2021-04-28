@@ -890,6 +890,9 @@ namespace Ogre {
 			mVrData->mWorldSpaceCorners[eyeIdx][5] = eyeToWorld.transformAffine(Vector3(farLeft,   farTop,     -farDist));
 			mVrData->mWorldSpaceCorners[eyeIdx][6] = eyeToWorld.transformAffine(Vector3(farLeft,   farBottom,  -farDist));
 			mVrData->mWorldSpaceCorners[eyeIdx][7] = eyeToWorld.transformAffine(Vector3(farRight,  farBottom,  -farDist));
+
+
+			//printf("%f\n",mVrData->mWorldSpaceCorners[eyeIdx][0]);
 		}
 
     }
@@ -960,6 +963,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const Vector3* Camera::getWorldSpaceCorners(void) const
     {
+    	printf("Normal getWorldSpaceCorners\n");
         if (mCullFrustum)
         {
             return mCullFrustum->getWorldSpaceCorners();
@@ -972,12 +976,14 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const Vector3* Camera::getVrWorldSpaceCorners(size_t eyeIdx) const
     {
+
     	if ( mVrData)
     	{
     		return mVrData->mWorldSpaceCorners[eyeIdx];
     	}
     	else
     	{
+    		exit(1);
     		return getWorldSpaceCorners();
     	}
     }
