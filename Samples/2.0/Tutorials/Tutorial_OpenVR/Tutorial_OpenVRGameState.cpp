@@ -254,9 +254,13 @@ namespace Demo
 
         TutorialGameState::createScene01();
 
-        sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "SaintPetersBasilica.dds",
+#if 0
+        sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "cubemap.dds",
 						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
-
+#else
+        sceneManager->setSky(true, Ogre::SceneManager::SkyEquirectangular, "equi.png",
+        						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
+#endif
     }
     //-----------------------------------------------------------------------------------
     void Tutorial_OpenVRGameState::update( float timeSinceLast )

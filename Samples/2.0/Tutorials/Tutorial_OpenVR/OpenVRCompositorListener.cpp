@@ -8,6 +8,8 @@
 
 #include "Compositor/OgreCompositorWorkspace.h"
 
+#include <iostream>
+
 namespace Demo
 {
     OpenVRCompositorListener::OpenVRCompositorListener(
@@ -92,6 +94,13 @@ namespace Demo
                 ++mValidPoseCount;
                 mDevicePose[nDevice] = convertSteamVRMatrixToMatrix4(
                                            mTrackedDevicePose[nDevice].mDeviceToAbsoluteTracking );
+#if 1
+                Ogre::Matrix3 m;
+                	m.FromEulerAnglesXYZ(Ogre::Radian(Ogre::Degree(0)), Ogre::Degree(90),
+                						 Ogre::Radian(Ogre::Degree(0)));
+
+                mDevicePose[nDevice] = Ogre::Matrix4::getTrans(0,2,0)*m;
+#endif
             }
         }
 
@@ -141,6 +150,8 @@ namespace Demo
             {
                 vr::EVREye eyeIdx = static_cast<vr::EVREye>( i );
                 eyeToHead[i] = convertSteamVRMatrixToMatrix4( mHMD->GetEyeToHeadTransform( eyeIdx ) );
+
+                std::cout<<i<<" "<< eyeToHead[i]<< std::endl;
                 projectionMatrix[i] =
                         convertSteamVRMatrixToMatrix4( mHMD->GetProjectionMatrix( eyeIdx,
                                                                                   camNear, camFar ) );
@@ -149,13 +160,81 @@ namespace Demo
                 mHMD->GetProjectionRaw( eyeIdx, &eyeFrustumExtents[i].x, &eyeFrustumExtents[i].y,
                                         &eyeFrustumExtents[i].z, &eyeFrustumExtents[i].w );
 
+#if 1
+                {
+                	Ogre::Matrix4 invProj = projectionMatrix[i].inverse();
+                    Ogre::Vector4 topLeft( -1.0f, 1.0f, -1.0f, 1.0f );
+                    Ogre::Vector4 bottomRight( 1.0f, -1.0f, -1.0f, 1.0f );
+
+                    topLeft = invProj * topLeft;
+                    bottomRight = invProj * bottomRight;
+
+                    float left = (topLeft.x / topLeft.w)*10.0f;
+                    float top = (topLeft.y / topLeft.w)*10.0f;
+                    float right = (bottomRight.x / bottomRight.w)*10.0f;
+                    float bottom = (bottomRight.y / bottomRight.w)*10.0f;
+
+                    if (i==1)
+                    {
+                    	printf("eye %f %f\n",eyeToHead[0][0][3],eyeToHead[1][0][3]);
+                    	printf("eye %f %f\n",eyeToHead[0][1][3],eyeToHead[1][1][3]);
+                    	printf("eye %f %f\n",eyeToHead[0][2][3],eyeToHead[1][2][3]);
+                    	//bottom-=eyeToHead[0][1][3];
+                    	//top-=eyeToHead[0][1][3];
+                    }
+                    else
+                    {
+
+                    }
+                    //bottom-=eyeToHead[i][2][3]/2;
+                    //top-=eyeToHead[i][2][3]/2;
+
+                    mCamera->setVrFrustumExtents( i,left,right,top,bottom,Ogre::FET_TAN_HALF_ANGLES );
+
+                    printf("Calc %d %f %f %f %f\n",i,left,right,top,bottom);
+
+                }
+#endif
+#if 0
+                if (i==1)
+                {
+                	eyeFrustumExtents[i].z+=0.0024;
+                	eyeFrustumExtents[i].w+=0.0024;
+                }
+                else
+
+                	                {
+                	                	eyeFrustumExtents[i].z-=0.0024;
+                	                	eyeFrustumExtents[i].w-=0.0024;
+                	                }
+#endif
+#if 0
                 mCamera->setVrFrustumExtents( i,eyeFrustumExtents[i].x, eyeFrustumExtents[i].y,
                             		eyeFrustumExtents[i].w, eyeFrustumExtents[i].z,
                                                               Ogre::FET_TAN_HALF_ANGLES );
-
+#endif
             }
 
+            printf("Offset %f\n", eyeFrustumExtents[0].z-eyeFrustumExtents[1].z);
+            printf("Offset %f\n", eyeFrustumExtents[0].w-eyeFrustumExtents[1].w);
+
+            printf("Size %f\n", eyeFrustumExtents[0].z-eyeFrustumExtents[0].w);
+            printf("Size %f\n", eyeFrustumExtents[1].z-eyeFrustumExtents[1].w);
+
             mVrData.set( eyeToHead, projectionMatrixRS );
+
+#if 1
+            printf("DDD %f %f %f\n",mVrData.mLeftToRight[0],mVrData.mLeftToRight[1],mVrData.mLeftToRight[2]);
+
+            size_t i=0;
+
+            printf("DDD %f %f %f %f\n",eyeFrustumExtents[i].x, eyeFrustumExtents[i].y,
+            		eyeFrustumExtents[i].w, eyeFrustumExtents[i].z);
+            i=1;
+            printf("DDD %f %f %f %f\n",eyeFrustumExtents[i].x, eyeFrustumExtents[i].y,
+                        		eyeFrustumExtents[i].w, eyeFrustumExtents[i].z);
+#endif
+
             mLastCamNear = camNear;
             mLastCamFar = camFar;
 

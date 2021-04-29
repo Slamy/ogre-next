@@ -1407,22 +1407,23 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
             const Vector3 &cameraPos = camera->getDerivedPosition();
             const Real invFarPlane = 1.0f / camera->getFarClipDistance();
 
-            camera->updateVrWorldSpaceCorners();
-            
             Vector3 cameraDirs[4];
             //if (!isUsingInstancedStereo())
             if (0)
             {
-				corners = camera->getVrWorldSpaceCorners(0);
+				corners = camera->getWorldSpaceCorners();
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
 				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
 				cameraDirs[2] = ( corners[4] - cameraPos ) * invFarPlane;
 				cameraDirs[3] = ( corners[7] - cameraPos ) * invFarPlane;
 
 				mSky->setNormals( cameraDirs[0], cameraDirs[1], cameraDirs[2], cameraDirs[3] );
+				mSky->setStereoNormals( cameraDirs[0], cameraDirs[1], cameraDirs[2], cameraDirs[3] );
             }
             else
             {
+            	camera->updateVrWorldSpaceCorners();
+
 				corners = camera->getVrWorldSpaceCorners(0);
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
 				cameraDirs[1] = ( corners[6] - cameraPos ) * invFarPlane;
