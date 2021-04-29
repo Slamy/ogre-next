@@ -136,7 +136,7 @@ namespace Demo
                 mSceneNode[idx] = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )->
                         createChildSceneNode( Ogre::SCENE_DYNAMIC );
 
-                mSceneNode[idx]->setPosition( (i - 1.5f) * armsLength,
+                mSceneNode[idx]->setPosition( -100+(i - 1.5f) * armsLength,
                                               2.0f,
                                               (j - 1.5f) * armsLength );
                 mSceneNode[idx]->setScale( 0.65f, 0.65f, 0.65f );
@@ -201,7 +201,7 @@ namespace Demo
 
                     Ogre::SceneNode *sceneNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )->
                             createChildSceneNode( Ogre::SCENE_DYNAMIC );
-                    sceneNode->setPosition( Ogre::Vector3( armsLength * x - startX,
+                    sceneNode->setPosition( Ogre::Vector3( -100+armsLength * x - startX,
                                                            1.0f,
                                                            armsLength * z - startZ ) );
                     sceneNode->attachObject( item );
@@ -253,6 +253,15 @@ namespace Demo
         mCameraController = new CameraController( mGraphicsSystem, false );
 
         TutorialGameState::createScene01();
+
+        sceneManager->setSkyStereoMode(true);
+#if 0
+        sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "cubemap.dds",
+						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
+#else
+        sceneManager->setSky(true, Ogre::SceneManager::SkyEquirectangular, "equi.png",
+        						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
+#endif
     }
     //-----------------------------------------------------------------------------------
     void Tutorial_OpenVRGameState::update( float timeSinceLast )
