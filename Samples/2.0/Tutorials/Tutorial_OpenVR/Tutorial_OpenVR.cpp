@@ -39,7 +39,7 @@ extern const bool c_useRDM;
 //
 // The main reason we allow this setting to be disabled is because it is
 // causing glitches in NVIDIA GPUs in Linux, see https://github.com/OGRECave/ogre-next/issues/53
-const bool c_useRDM = true;
+const bool c_useRDM = false;
 
 namespace Demo
 {
