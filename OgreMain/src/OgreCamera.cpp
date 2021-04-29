@@ -856,40 +856,51 @@ namespace Ogre {
 		for( size_t eyeIdx=0u; eyeIdx<2u; ++eyeIdx )
 		{
 			Real nearLeft, nearRight, nearBottom, nearTop;
-			nearLeft = mVrData->mLeft[eyeIdx];
-			nearRight = mVrData->mRight[eyeIdx];
-			nearTop = mVrData->mTop[eyeIdx];
-			nearBottom = mVrData->mBottom[eyeIdx];
 
-			if (mVrData->mFrustrumExtentsType[eyeIdx] == FET_TAN_HALF_ANGLES)
-			{
-				nearLeft    *= mNearDist;
-				nearRight   *= mNearDist;
-				nearTop     *= mNearDist;
-				nearBottom  *= mNearDist;
-			}
+            Matrix4 invProj = mVrData->mProjectionMatrix[eyeIdx].inverse();
 
+            Vector4 topLeft( -1.0f, 1.0f, -1.0f, 1.0f );
+            Vector4 topRight( 1.0f, 1.0f, -1.0f, 1.0f );
+
+            Vector4 bottomRight( 1.0f, -1.0f, -1.0f, 1.0f );
+            Vector4 bottomLeft( -1.0f, -1.0f, -1.0f, 1.0f );
+
+            topLeft = invProj * topLeft;
+            topRight = invProj * topRight;
+            bottomLeft = invProj * bottomLeft;
+            bottomRight = invProj * bottomRight;
+
+            Matrix4 headToEye= mVrData->mHeadToEye[eyeIdx].inverse();
+            headToEye.setTrans(Vector3::ZERO);
+
+            topLeft = headToEye * topLeft;
+			topRight = headToEye * topRight;
+			bottomLeft = headToEye * bottomLeft;
+			bottomRight = headToEye * bottomRight;
+
+
+            Vector4 nearTopLeft    = topLeft*mNearDist;
+            Vector4 nearTopRight   = topRight*mNearDist;
+            Vector4 nearBottomLeft     = bottomLeft*mNearDist;
+            Vector4 nearBottomRight  = bottomRight*mNearDist;
 
 			// Treat infinite fardist as some arbitrary far value
 			Real farDist = (mFarDist == 0) ? 100000 : mFarDist;
 
 			// Calc far palne corners
 			Real radio = mProjType == PT_PERSPECTIVE ? farDist / mNearDist : 1;
-			Real farLeft = nearLeft * radio;
-			Real farRight = nearRight * radio;
-			Real farBottom = nearBottom * radio;
-			Real farTop = nearTop * radio;
+			Vector4 farTopLeft = nearTopLeft * radio;
+			Vector4 farTopRight = nearTopRight * radio;
+			Vector4 farBottomLeft = nearBottomLeft * radio;
+			Vector4 farBottomRight = nearBottomRight * radio;
 
 			// near
-			mVrData->mWorldSpaceCorners[eyeIdx][0] = eyeToWorld.transformAffine(Vector3(nearRight, nearTop,    -mNearDist));
-			mVrData->mWorldSpaceCorners[eyeIdx][1] = eyeToWorld.transformAffine(Vector3(nearLeft,  nearTop,    -mNearDist));
-			mVrData->mWorldSpaceCorners[eyeIdx][2] = eyeToWorld.transformAffine(Vector3(nearLeft,  nearBottom, -mNearDist));
-			mVrData->mWorldSpaceCorners[eyeIdx][3] = eyeToWorld.transformAffine(Vector3(nearRight, nearBottom, -mNearDist));
+
 			// far
-			mVrData->mWorldSpaceCorners[eyeIdx][4] = eyeToWorld.transformAffine(Vector3(farRight,  farTop,     -farDist));
-			mVrData->mWorldSpaceCorners[eyeIdx][5] = eyeToWorld.transformAffine(Vector3(farLeft,   farTop,     -farDist));
-			mVrData->mWorldSpaceCorners[eyeIdx][6] = eyeToWorld.transformAffine(Vector3(farLeft,   farBottom,  -farDist));
-			mVrData->mWorldSpaceCorners[eyeIdx][7] = eyeToWorld.transformAffine(Vector3(farRight,  farBottom,  -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][4] = eyeToWorld.transformAffine(Vector3(farTopRight.x,  farTopRight.y,     -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][5] = eyeToWorld.transformAffine(Vector3(farTopLeft.x,   farTopLeft.y,     -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][6] = eyeToWorld.transformAffine(Vector3(farBottomLeft.x,   farBottomLeft.y,  -farDist));
+			mVrData->mWorldSpaceCorners[eyeIdx][7] = eyeToWorld.transformAffine(Vector3(farBottomRight.x,  farBottomRight.y,  -farDist));
 
 
 			//printf("%f\n",mVrData->mWorldSpaceCorners[eyeIdx][0]);

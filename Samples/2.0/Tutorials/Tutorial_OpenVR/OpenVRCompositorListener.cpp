@@ -94,7 +94,7 @@ namespace Demo
                 ++mValidPoseCount;
                 mDevicePose[nDevice] = convertSteamVRMatrixToMatrix4(
                                            mTrackedDevicePose[nDevice].mDeviceToAbsoluteTracking );
-#if 1
+#if 0
                 Ogre::Matrix3 m;
                 	m.FromEulerAnglesXYZ(Ogre::Radian(Ogre::Degree(0)), Ogre::Degree(90),
                 						 Ogre::Radian(Ogre::Degree(0)));
@@ -150,17 +150,22 @@ namespace Demo
             {
                 vr::EVREye eyeIdx = static_cast<vr::EVREye>( i );
                 eyeToHead[i] = convertSteamVRMatrixToMatrix4( mHMD->GetEyeToHeadTransform( eyeIdx ) );
+                //eyeToHead[i] =Ogre::Matrix4::IDENTITY;
 
-                std::cout<<i<<" "<< eyeToHead[i]<< std::endl;
+
                 projectionMatrix[i] =
                         convertSteamVRMatrixToMatrix4( mHMD->GetProjectionMatrix( eyeIdx,
                                                                                   camNear, camFar ) );
                 mRenderSystem->_convertOpenVrProjectionMatrix( projectionMatrix[i],
                                                                projectionMatrixRS[i] );
+
+                std::cout<<i<<" "<< projectionMatrix[i]<< std::endl;
+                std::cout<<i<<" "<< eyeToHead[i]<< std::endl;
                 mHMD->GetProjectionRaw( eyeIdx, &eyeFrustumExtents[i].x, &eyeFrustumExtents[i].y,
                                         &eyeFrustumExtents[i].z, &eyeFrustumExtents[i].w );
 
 #if 1
+                mVrData.mProjInverse[i]=projectionMatrix[i].inverse();
                 {
                 	Ogre::Matrix4 invProj = projectionMatrix[i].inverse();
                     Ogre::Vector4 topLeft( -1.0f, 1.0f, -1.0f, 1.0f );

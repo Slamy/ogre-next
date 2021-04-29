@@ -320,7 +320,6 @@ namespace Ogre {
             }
             // Submit shader source.
             const char *source = mSource.c_str();
-			printf("COMPILE SHADER !!!\n%s\n",source);
             OGRE_CHECK_GL_ERROR(glShaderSource(mGLShaderHandle, 1, &source, NULL));
         }
 

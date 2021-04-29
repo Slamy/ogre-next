@@ -45,6 +45,7 @@ namespace Ogre {
     struct VrData
     {
         Matrix4 mHeadToEye[2];
+        Matrix4 mProjInverse[2];
         Matrix4 mProjectionMatrix[2];
         //Matrix4 mLeftToRight;
         Vector3 mLeftToRight;
