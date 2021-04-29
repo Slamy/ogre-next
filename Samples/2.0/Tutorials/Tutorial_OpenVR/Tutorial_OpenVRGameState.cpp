@@ -254,7 +254,6 @@ namespace Demo
 
         TutorialGameState::createScene01();
 
-        sceneManager->setSkyStereoMode(true);
         sceneManager->setSky(true, Ogre::SceneManager::SkyCubemap, "SaintPetersBasilica.dds",
 						 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
     }

@@ -29,7 +29,7 @@ int mainApp( int argc, const char *argv[] )
     return Demo::MainEntryPoints::mainAppSingleThreaded( DEMO_MAIN_ENTRY_PARAMS );
 }
 
-#define USE_OPEN_VR
+//#define USE_OPEN_VR
 
 extern const bool c_useRDM;
 
