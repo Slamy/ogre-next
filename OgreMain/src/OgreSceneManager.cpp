@@ -1403,7 +1403,7 @@ void SceneManager::_renderPhase02(Camera* camera, const Camera *lodCamera,
             const Real invFarPlane = 1.0f / camera->getFarClipDistance();
             Vector3 cameraDirs[4];
 
-            if (!mSky->isStereo())
+            if (!isUsingInstancedStereo())
             {
 				corners = camera->getWorldSpaceCorners();
 				cameraDirs[0] = ( corners[5] - cameraPos ) * invFarPlane;
