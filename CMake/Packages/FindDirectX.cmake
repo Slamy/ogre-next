@@ -36,6 +36,7 @@ if(WIN32) # The only platform it makes sense to check for DirectX9 SDK
     "C:/apps/Microsoft DirectX SDK*"
     "C:/Program Files/Microsoft DirectX SDK*"
 	"$ENV{ProgramFiles}/Microsoft DirectX SDK*"
+	"C:/msys64/mingw64/x86_64-w64-mingw32/include"
   )
 
   create_search_paths(DirectX9)
@@ -46,7 +47,9 @@ if(WIN32) # The only platform it makes sense to check for DirectX9 SDK
 	DirectX9_INCLUDE_DIR
   )
   
-  find_path(DirectX9_INCLUDE_DIR NAMES d3d9.h D3DCommon.h HINTS ${DirectX9_INC_SEARCH_PATH})
+  set(DirectX9_LIB_SEARCH_PATH "C:/msys64/mingw64/x86_64-w64-mingw32/lib")
+  
+  find_path(DirectX9_INCLUDE_DIR NAMES d3d9.h D3DCommon.h HINTS ${DirectX9_INC_SEARCH_PATH} "C:/msys64/mingw64/x86_64-w64-mingw32/include")
   # dlls are in DirectX9_ROOT_DIR/Developer Runtime/x64|x86
   # lib files are in DirectX9_ROOT_DIR/Lib/x64|x86
   if(CMAKE_CL_64)

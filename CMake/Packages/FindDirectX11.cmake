@@ -86,6 +86,8 @@ if(WIN32) # The only platform it makes sense to check for DirectX11 SDK
 		"C:/apps/Microsoft DirectX SDK*"
 		"C:/Program Files/Microsoft DirectX SDK*"
 		"$ENV{ProgramFiles}/Microsoft DirectX SDK*"
+		"C:/msys64/mingw64/x86_64-w64-mingw32/include"
+		
 		)
 
 		create_search_paths(DirectX11)
@@ -95,6 +97,9 @@ if(WIN32) # The only platform it makes sense to check for DirectX11 SDK
 			DirectX11_INCLUDE_DIR
 		)
 
+set(DirectX11_INC_SEARCH_PATH "C:/msys64/mingw64/x86_64-w64-mingw32/include")
+		set(DirectX11_LIB_SEARCH_PATH "C:/msys64/mingw64/x86_64-w64-mingw32/lib")
+  
 		# dlls are in DirectX11_ROOT_DIR/Developer Runtime/x64|x86
 		# lib files are in DirectX11_ROOT_DIR/Lib/x64|x86
 		if(CMAKE_CL_64)
